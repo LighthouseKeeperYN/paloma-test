@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <Card class="max-w-[960px]">
     <template #content>
       <table>
         <tbody>

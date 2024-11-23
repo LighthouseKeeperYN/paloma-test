@@ -10,12 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { useFetch } from '@vueuse/core'
+import { computed } from "vue";
+import { useFetch } from '@vueuse/core';
 import Select from 'primevue/select';
-import {  computed, ref } from "vue";
 
 import type { AccountResponse } from '@/api/types';
-import { apiAccountsUrl } from '@/api/urls';
+import { accountsUrl } from '@/api/urls';
 
 const props = defineProps<{
   modelValue?: AccountResponse['data'][number]
@@ -25,9 +25,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', accounts: AccountResponse['data']): void
 }>()
 
-const { data: accountsResponse } = useFetch<AccountResponse>(apiAccountsUrl).json()
+const { data: accountsResponse } = useFetch<AccountResponse>(accountsUrl).json()
 
 const accounts = computed(() => accountsResponse.value?.data ?? [])
-
-const selectedAccount = ref();
 </script>
