@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useWebSocket } from '@vueuse/core'
+import { useStorage, useWebSocket } from '@vueuse/core'
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -38,12 +38,12 @@ const props = defineProps<{
   account: AccountResponse['data'][number]
 }>()
 
-const isPaused = ref(false)
-const transactions = ref<Transaction[]>([])
+const isPaused = useStorage<boolean>('isPaused', false)
+const transactions = useStorage<Transaction[]>('transactions', [])
 const filteredTransactions = ref<Transaction[]>([])
 const accountId = computed(() => transactionsUrl(props.account.accountId))
 
-const { data, open, close } = useWebSocket(accountId)
+const { data, open, close } = useWebSocket(accountId, { immediate: !isPaused.value })
 
 const onButtonClick = () => {
   if (isPaused.value) {
@@ -56,7 +56,8 @@ const onButtonClick = () => {
 }
 
 watch(accountId, () => {
-  transactions.value = []
+  transactions.value.length = 0 // useStorage workaround
+  filteredTransactions.value = []
 
   if (isPaused.value) {
     close()

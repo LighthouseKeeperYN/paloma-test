@@ -18,7 +18,7 @@ import type { AccountResponse } from '@/api/types';
 import { accountsUrl } from '@/api/urls';
 
 const props = defineProps<{
-  modelValue?: AccountResponse['data'][number]
+  modelValue: AccountResponse['data'][number] | null
 }>()
 
 const emit = defineEmits<{

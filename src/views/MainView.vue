@@ -7,13 +7,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { StorageSerializers, useStorage } from '@vueuse/core'
 import type { AccountResponse } from '@/api/types';
 import AccountDetails from '@/components/AccountDetails.vue';
 import AccountDropdown from '@/components/AccountDropdown.vue';
 import TransactionTable from '@/components/TransactionTable.vue';
 
-const selectedAccount = ref<AccountResponse['data'][number]>()
+const selectedAccount = useStorage<AccountResponse['data'][number] | null >(
+  'selectedAccount',
+  null,
+  localStorage,
+  { serializer: StorageSerializers.object }
+)
 </script>
 
 <style scoped></style>

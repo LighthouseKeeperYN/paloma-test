@@ -8,10 +8,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 import { InputNumber } from "primevue";
 import type { Transaction } from '@/api/types';
+import { StorageSerializers, useStorage } from '@vueuse/core';
 
 const props = defineProps<{
   modelValue: Transaction[]
@@ -23,10 +24,22 @@ const emit = defineEmits<{
 }>()
 
 const currencies = ["USD", "CAD", "EUR", "GBP", "AUD", "JPY"];
-const selectedCurrencies = ref<Transaction['currency'][]>([]);
 
-const minTransactionValue = ref<number>();
-const maxTransactionValue = ref<number>();
+const selectedCurrencies = useStorage<Transaction['currency'][]>('selectedCurrencies', [])
+
+const minTransactionValue = useStorage<number | null>(
+  'minTransactionValue',
+  null,
+  localStorage,
+  { serializer: StorageSerializers.number }
+)
+
+const maxTransactionValue = useStorage<number | null >(
+  'maxTransactionValue',
+  null,
+  localStorage,
+  { serializer: StorageSerializers.number }
+)
 
 watch([props.transactions, selectedCurrencies, minTransactionValue, maxTransactionValue], () => {
   const filteredTransactions = props.transactions.filter((transaction) => {
