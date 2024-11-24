@@ -1,5 +1,6 @@
 <template>
   <div class="p-8">
+    <Toast />
     <AccountDropdown v-model="selectedAccount" />
     <AccountDetails v-if="selectedAccount" :account="selectedAccount" class="mt-4" />
     <TransactionTable v-if="selectedAccount" :account="selectedAccount" />
@@ -8,6 +9,7 @@
 
 <script setup lang="ts">
 import { StorageSerializers, useStorage } from '@vueuse/core'
+import { Toast } from 'primevue';
 import type { AccountResponse } from '@/api/types';
 import AccountDetails from '@/components/AccountDetails.vue';
 import AccountDropdown from '@/components/AccountDropdown.vue';

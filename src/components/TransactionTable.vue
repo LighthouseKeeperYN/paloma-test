@@ -26,24 +26,35 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useStorage, useWebSocket } from '@vueuse/core'
+import { useWebSocket } from '@vueuse/core'
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { transactionsUrl } from '@/api/urls';
 import type { AccountResponse, Transaction } from '@/api/types';
 import TransactionFilter from './TransactionFilter.vue';
+import { useToast } from 'primevue';
 
 const props = defineProps<{
   account: AccountResponse['data'][number]
 }>()
 
-const isPaused = useStorage<boolean>('isPaused', false)
+const toast = useToast();
+
+const isPaused = ref<boolean>(false)
 const transactions = ref<Transaction[]>([])
 const filteredTransactions = ref<Transaction[]>([])
 const accountId = computed(() => transactionsUrl(props.account.accountId))
 
-const { data, open, close } = useWebSocket(accountId, { immediate: !isPaused.value })
+const { data, open, close, status } = useWebSocket(accountId, {
+  immediate: !isPaused.value,
+  autoReconnect: {
+    retries: 0,
+    onFailed() {
+      toast.add({ severity: 'error', summary: 'Unexpected error', detail: 'Oops, something went wrong. Please try to refresh the page' });
+    },
+  },
+ })
 
 const onButtonClick = () => {
   if (isPaused.value) {
@@ -65,6 +76,10 @@ watch(accountId, () => {
 
 watch(data, () => {
   transactions.value.push(JSON.parse(data.value ?? ''))
+})
+
+watch(status, () => {
+  status.value
 })
 </script>
 

@@ -16,6 +16,7 @@ import Select from 'primevue/select';
 
 import type { AccountResponse } from '@/api/types';
 import { accountsUrl } from '@/api/urls';
+import { useToast } from 'primevue';
 
 const props = defineProps<{
   modelValue: AccountResponse['data'][number] | null
@@ -25,7 +26,13 @@ const emit = defineEmits<{
   (e: 'update:modelValue', accounts: AccountResponse['data']): void
 }>()
 
-const { data: accountsResponse } = useFetch<AccountResponse>(accountsUrl).json()
+const toast = useToast()
+
+const { data: accountsResponse, onFetchError } = useFetch<AccountResponse>(accountsUrl).json()
+
+onFetchError(() => {
+  toast.add({ severity: 'error', summary: 'Unexpected error', detail: 'Oops, something went wrong. Please try to refresh the page' });
+})
 
 const accounts = computed(() => accountsResponse.value?.data ?? [])
 </script>
