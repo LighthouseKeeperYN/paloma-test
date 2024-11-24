@@ -1,5 +1,7 @@
 <template>
   <div class="max-w-[960px]">
+    <TransactionFilter class="mt-4" v-model="filteredTransactions" :transactions="transactions" />
+
     <div class="my-4">
       <Button @click="onButtonClick">{{ isPaused ? 'Resume' : 'Pause' }}</Button>
 
@@ -9,9 +11,14 @@
       </span>
     </div>
 
-    <DataTable :value="transactions" tableStyle="min-width: 50rem">
+
+    <DataTable :value="filteredTransactions" tableStyle="min-width: 50rem">
       <Column field="destinationName" header="Account"></Column>
-      <Column field="amount" header="Amount"></Column>
+      <Column field="amount" header="Amount">
+        <template #body="{ data }">
+          {{ data.direction === 'inflow' ? '+' : '-' }}{{ data.amount }}
+        </template>
+      </Column>
       <Column field="currency" header="Currency"></Column>
     </DataTable>
   </div>
@@ -23,20 +30,20 @@ import { useWebSocket } from '@vueuse/core'
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-
 import { transactionsUrl } from '@/api/urls';
-import type { AccountResponse } from '@/api/types';
+import type { AccountResponse, Transaction } from '@/api/types';
+import TransactionFilter from './TransactionFilter.vue';
 
 const props = defineProps<{
   account: AccountResponse['data'][number]
 }>()
 
-const transactions = ref([])
-
-const accountId = computed(() => transactionsUrl(props.account.accountId))
-const { data, open, close } = useWebSocket(accountId)
-
 const isPaused = ref(false)
+const transactions = ref<Transaction[]>([])
+const filteredTransactions = ref<Transaction[]>([])
+const accountId = computed(() => transactionsUrl(props.account.accountId))
+
+const { data, open, close } = useWebSocket(accountId)
 
 const onButtonClick = () => {
   if (isPaused.value) {
@@ -57,7 +64,7 @@ watch(accountId, () => {
 })
 
 watch(data, () => {
-  transactions.value.push(JSON.parse(data.value))
+  transactions.value.push(JSON.parse(data.value ?? ''))
 })
 </script>
 
