@@ -39,7 +39,7 @@ const props = defineProps<{
 }>()
 
 const isPaused = useStorage<boolean>('isPaused', false)
-const transactions = useStorage<Transaction[]>('transactions', [])
+const transactions = ref<Transaction[]>([])
 const filteredTransactions = ref<Transaction[]>([])
 const accountId = computed(() => transactionsUrl(props.account.accountId))
 
@@ -56,8 +56,7 @@ const onButtonClick = () => {
 }
 
 watch(accountId, () => {
-  transactions.value.length = 0 // useStorage workaround
-  filteredTransactions.value = []
+  transactions.value.length = 0
 
   if (isPaused.value) {
     close()
