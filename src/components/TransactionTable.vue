@@ -18,7 +18,7 @@
       paginator
       :rows="10"
       :rowsPerPageOptions="[5, 10, 20, 50]"
-      :loading="!transactions.length"
+      :loading="!isPaused && !transactions.length"
     >
       <Column field="destinationName" header="Account"></Column>
       <Column field="amount" header="Amount">
