@@ -4,7 +4,7 @@ Vue is great for small projects like this. PrimeVue is my ui library of preferen
 
 ### Is there anything you would improve if you had more time and resources?
 
-I would handle errors in more elegant way and implement auto-reconnect.
+I would handle errors in more elegant way and implement auto-reconnect. I would come up with more efficient data structure for transactions.
 
 ### Is there anything about your solution that you’re really proud of that you’d like to share?
 

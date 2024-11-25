@@ -6,6 +6,7 @@
     placeholder="Select an account"
     class="w-56"
     @update:modelValue="emit('update:modelValue', $event)"
+    :loading="!props.modelValue"
    />
 </template>
 

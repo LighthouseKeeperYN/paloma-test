@@ -12,7 +12,14 @@
     </div>
 
 
-    <DataTable :value="filteredTransactions" tableStyle="min-width: 50rem">
+    <DataTable
+      :value="filteredTransactions"
+      tableStyle="min-width: 50rem"
+      paginator
+      :rows="10"
+      :rowsPerPageOptions="[5, 10, 20, 50]"
+      :loading="!transactions.length"
+    >
       <Column field="destinationName" header="Account"></Column>
       <Column field="amount" header="Amount">
         <template #body="{ data }">
@@ -75,7 +82,7 @@ watch(accountId, () => {
 })
 
 watch(data, () => {
-  transactions.value.push(JSON.parse(data.value ?? ''))
+  transactions.value.unshift(JSON.parse(data.value ?? ''))
 })
 
 watch(status, () => {
